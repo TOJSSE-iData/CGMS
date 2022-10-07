@@ -1,0 +1,29 @@
+# input files
+task: debug  # cv or debug, if debug, only use first fold,lr,hidden
+drug_feat: data/proc/drug_feat_ae.npy
+cell_feat: data/proc/drug_feat_ae.npy
+drug2id: data/proc/drug2id.tsv
+cell2id: data/proc/cell2id.tsv
+synergy: data/proc/syn4cv.csv
+sensitivity: data/sen_syn_feat_dcnt5.csv
+random_seed: 272
+dataloader:
+  eval_factor: 4 # batch_size *= eval_factor when eval model
+  num_workers: 4
+  prefetch_factor: 2
+  pin_memory: true
+folds:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+gpu: 1  # set -1 to avoid using gpu
+hyper_param:
+  batch_size: 256
+  epoch: 500
+  hidden:
+    - 256
+  lr:
+    - 1e-4
+  patience: 50
