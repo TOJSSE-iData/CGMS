@@ -1,7 +1,7 @@
 # input files
-task: debug  # cv or debug, if debug, only use first fold,lr,hidden
-drug_feat: data/proc/drug_feat_ae.npy
-cell_feat: data/proc/drug_feat_ae.npy
+task: cv  # cv or debug
+drug_feat: output/drug_feat_ae.npy
+cell_feat: output/drug_feat_ae.npy
 drug2id: data/proc/drug2id.tsv
 cell2id: data/proc/cell2id.tsv
 synergy: data/proc/syn4cv.csv
@@ -23,7 +23,11 @@ hyper_param:
   batch_size: 256
   epoch: 500
   hidden:
+    - 128
     - 256
+    - 512
   lr:
+    - 1e-3
     - 1e-4
+    - 1e-6
   patience: 50

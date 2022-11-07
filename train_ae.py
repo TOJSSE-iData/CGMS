@@ -8,25 +8,23 @@ import numpy as np
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, random_split
 
-from cgm.models import AutoEncoder, VAE
-from cgm.datasets import AEDataset
-from cgm.utils import save_best_model, find_best_model, save_args
-
-
+from cgms.models import AutoEncoder
+from cgms.datasets import AEDataset
+from cgms.utils import save_best_model, find_best_model, save_args
 
 
 def main(args):
     if args.ae_type == 0:
-        ae_ds = AEDataset('./data/raw/drug_feat.npy')
-        output_dir = f'output/drugAE_{args.suffix}'
-        out_fn = 'drug_feat_ae.npy'
+        entity = 'drug'
     else:
-        ae_ds = AEDataset('./data/raw/cell_feat.npy')
-        output_dir = f'output/cellAE_{args.suffix}'
-        out_fn = 'cell_feat_ae.npy'
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-    save_args(args, os.path.join(output_dir, 'args.json'))
+        entity = 'cell'
+    ae_ds = AEDataset(f'./data/raw_{entity}_feat.npy')
+    out_fn = f'{entity}_feat_ae.npy'
+    output_dir = 'output'
+    output_entity_dir = os.path.join(output_dir, f'{entity}_ae')
+    if not os.path.exists(output_entity_dir):
+        os.makedirs(output_entity_dir)
+    save_args(args, os.path.join(output_entity_dir, 'args.json'))
 
     trn_loader = DataLoader(ae_ds, batch_size=len(ae_ds), shuffle=True)
     test_loader = DataLoader(ae_ds, batch_size=len(ae_ds), shuffle=False)
@@ -34,7 +32,7 @@ def main(args):
     model = AutoEncoder(ae_ds.data.shape[1], [args.dim * 2, args.dim])
     if th.cuda.is_available():
         model = model.to('cuda')
-    optimizer = th.optim.Adam(model.parameters(), lr=args.lr)
+    optimizer = th.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=0.01)
     for i in range(1, args.epoch + 1):
         model.train()
         for x in trn_loader:
@@ -46,10 +44,10 @@ def main(args):
             trn_loss.backward()
             optimizer.step()
             print(f"Epoch {i:03d} | Train Loss: {trn_loss.item():.6f}")
-            save_best_model(model.state_dict(), output_dir, i, keep=2)
+            save_best_model(model.state_dict(), output_entity_dir, i, keep=2)
     with th.no_grad():
         model.eval()
-        model.load_state_dict(th.load(find_best_model(output_dir)))
+        model.load_state_dict(th.load(find_best_model(output_entity_dir)))
         for x in test_loader:
             if th.cuda.is_available():
                 x = x.to('cuda')
@@ -58,7 +56,7 @@ def main(args):
             out = z.cpu().numpy()
             print(f"mean diff: {F.l1_loss(x_hat, x, reduction='mean') :.6f}")
             np.save(os.path.join(output_dir, out_fn), out)
-            np.save(os.path.join(output_dir, 'reconstruct_x.npy'), x_hat.cpu().numpy())
+            np.save(os.path.join(output_entity_dir, f'reconstruct_x_{entity}.npy'), x_hat.cpu().numpy())
 
 
 if __name__ == '__main__':
@@ -68,7 +66,5 @@ if __name__ == '__main__':
     parser.add_argument('--epoch', type=int, default=20)
     parser.add_argument('--dim', type=int, default=256)
     parser.add_argument('--lr', type=float, default=1e-3)
-    parser.add_argument('--suffix', type=str, default=time_str,
-                        help="model dir suffix")
     args = parser.parse_args()
     main(args)

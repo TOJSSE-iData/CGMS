@@ -1,3 +1,7 @@
 **/.DS_Store
 .idea/*
 **/__pycache__/
+
+output/drug_ae
+output/cell_ae
+output/cv_cgms
