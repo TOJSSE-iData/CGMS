@@ -13,9 +13,9 @@ from datetime import datetime
 from torch.utils.data import DataLoader, SubsetRandomSampler
 
 from constant import HYPERPARAMETERS, EPOCHS
-from cgm.models import MultiTaskModel
-from cgm.datasets import SynergyDataset, SensitivityDataset
-from cgm.utils import random_split_indices, save_best_model, find_best_model, arg_min, calc_stat, conf_inv
+from cgms.models import MultiTaskModel
+from cgms.datasets import SynergyDataset, SensitivityDataset
+from cgms.utils import random_split_indices, save_best_model, find_best_model, arg_min, calc_stat, conf_inv
 
 time_str = str(datetime.now().strftime('%y%m%d%H%M'))
 
