@@ -24,9 +24,9 @@ To run cross-validation, using the following cmd:
 
 ~~~bash
 # run on single fold with gpu, 1 for example:
-python3 cv_cgm.py config.yaml --fold 1 --gpu 0 
+python3 cv_cgms.py config.yaml --fold 1 --gpu 0 
 # run on 5 fold:
-python3 cv_cgm.py config.yaml --gpu 0
+python3 cv_cgms.py config.yaml --gpu 0
 ~~~
 
 ## Cite
