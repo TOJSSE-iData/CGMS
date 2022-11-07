@@ -1,4 +1,4 @@
-# CGM
+# A complete graph-based approach with multi-task learning for predicting synergistic drug combinations
 
 ## Envs
 
