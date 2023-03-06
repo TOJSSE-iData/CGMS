@@ -26,7 +26,7 @@ from cgms.utils import (
     calc_stat,
     save_best_model,
     find_best_model,
-    random_split_indices
+    real_random_split_indices
 )
 
 time_str = str(datetime.now().strftime('%y%m%d%H%M'))
@@ -158,7 +158,7 @@ def train_model(
         valid_size = len(valid_set)
         test_size = 0
     elif test_set is not None:
-        tr_indices, es_indices = random_split_indices(train_set, test_rate=0.1)
+        tr_indices, es_indices = real_random_split_indices(len(train_set), test_rate=0.1)
         tr_subset = Subset(train_set, tr_indices)
         es_subset = Subset(train_set, es_indices)
         train_loader = DataLoader(tr_subset, batch_size=batch_size, shuffle=True, **dl_config)
@@ -447,11 +447,12 @@ def cv_all(config_fp, calc_metric_only=False):
     out_f.write(f"{datetime.now().strftime(logging_dt_fmt)} RMSE Sen: {mu:.4f} ± {sigma:.4f}\n")
     mu, sigma = calc_stat(pearson_coefs_sen)
     out_f.write(f"{datetime.now().strftime(logging_dt_fmt)} PCC Sen: {mu:.4f} ± {sigma:.4f}\n")
-    mu, sigma = calc_stat(mses_sen)
+    mu, sigma = calc_stat(mses)
     lo, hi = conf_inv(mu, sigma, len(mses_sen))
     out_f.write(f"{datetime.now().strftime(logging_dt_fmt)} Confidence interval Sen: [{lo:.4f}, {hi:.4f}]\n")
     out_f.write(f"{datetime.now().strftime(logging_dt_fmt)} CV completed")
     out_f.close()
+
 
 
 if __name__ == '__main__':

@@ -26,7 +26,7 @@ from cgms.utils import (
     calc_stat,
     save_best_model,
     find_best_model,
-    random_split_indices
+    real_random_split_indices
 )
 
 time_str = str(datetime.now().strftime('%y%m%d%H%M'))
@@ -158,7 +158,7 @@ def train_model(
         valid_size = len(valid_set)
         test_size = 0
     elif test_set is not None:
-        tr_indices, es_indices = random_split_indices(train_set, test_rate=0.1)
+        tr_indices, es_indices = real_random_split_indices(len(train_set), test_rate=0.1)
         tr_subset = Subset(train_set, tr_indices)
         es_subset = Subset(train_set, es_indices)
         train_loader = DataLoader(tr_subset, batch_size=batch_size, shuffle=True, **dl_config)

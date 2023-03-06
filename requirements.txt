@@ -1,0 +1,7 @@
+dgl==1.0.1
+dgl_cu102==0.7.2
+matplotlib==3.3.3
+numpy==1.18.5
+pandas==1.4.0
+PyYAML==6.0
+torch==1.8.2+cu102

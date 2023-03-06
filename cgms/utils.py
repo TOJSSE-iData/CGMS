@@ -104,7 +104,40 @@ def conf_inv(mu, sigma, n):
     return mu - delta, mu + delta
 
 
-def random_split_indices(n_samples, test_size: int = None, test_rate: float = None):
+def random_split_indices(dataset, test_size: int = None, test_rate: float = None):
+    u_keys = dataset.keys.drop_duplicates()
+    n_keys = u_keys.shape[0]
+    if test_size is None and test_rate is None:
+        raise ValueError("Either train_rate or test_rate should be given.")
+    elif test_size is not None:
+        if test_size <= 0:
+            raise ValueError("test size should be larger than 0, found {}".format(test_size))
+        train_size = n_keys - test_size
+    elif test_rate is not None:
+        if test_rate < 0 or test_rate > 1:
+            raise ValueError("test rate should be in [0, 1], found {}".format(test_rate))
+        train_size = int(n_keys * (1 - test_rate))
+    else:
+        Warning("Both test_size and test_rate are given, use test_size.")
+        train_size = n_keys - test_size
+
+    u_keys = u_keys.sample(frac=1).reset_index(drop=True)
+    u_keys['flag'] = -1
+    u_keys.iloc[:train_size, 2] = 0
+    u_keys.iloc[train_size:, 2] = 1
+    k2f = u_keys.set_index(['drug_row_idx', 'drug_col_idx'])['flag'].to_dict()
+    train_indices = []
+    test_indices = []
+    for i, row in dataset.keys.iterrows():
+        if k2f[(int(row['drug_row_idx']), int(row['drug_col_idx']))] == 0:
+            train_indices.append(i)
+        else:
+            test_indices.append(i)
+    return train_indices, test_indices
+
+
+
+def real_random_split_indices(n_samples, test_size: int = None, test_rate: float = None):
     if test_size is None and test_rate is None:
         raise ValueError("Either train_rate or test_rate should be given.")
     elif test_size is not None:
@@ -123,6 +156,7 @@ def random_split_indices(n_samples, test_size: int = None, test_rate: float = No
     train_indices = evidence[:train_size]
     test_indices = evidence[train_size:]
     return train_indices, test_indices
+
 
 
 def stratified_split_indices(samples, groupby, test_rate: float = None):

@@ -93,6 +93,7 @@ class CGSynDataset(Dataset):
         if type(use_folds) is int:
             use_folds = [use_folds]
         df_syn = df_syn[df_syn['fold'].isin(use_folds)]
+        self.keys = df_syn[['drug_row_idx', 'drug_col_idx']].reset_index(drop=True)
         # for i in [0, 1]:
         #     df_syn[self._header[i]] = df_syn[self._header[i]].apply(lambda x: drug2idx[x])
         # df_syn[self._header[2]] = df_syn[self._header[2]].apply(lambda x: cell2idx[x])

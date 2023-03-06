@@ -1,7 +1,11 @@
 **/.DS_Store
 .idea/*
 **/__pycache__/
+**/.vscode
 
-output/drug_ae
-output/cell_ae
-output/cv_cgms
+output/*
+!output/drug_feat_ae.npy
+!output/cell_feat_ae.npy
+
+cv_cgms.py
+*.out

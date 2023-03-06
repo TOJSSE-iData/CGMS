@@ -4,9 +4,9 @@ drug_feat: output/drug_feat_ae.npy
 cell_feat: output/cell_feat_ae.npy
 drug2id: data/drug2id.tsv
 cell2id: data/cell2id.tsv
-synergy: data/syn4cv.csv
-sensitivity: data/sen_syn_feat_dcnt5.csv
-suffix: cgms
+synergy: data/syn4cv_lv_c_out.csv
+sensitivity: data/sen4cv_lv_c_out.csv
+random_seed: 356
 dataloader:
   eval_factor: 4 # batch_size *= eval_factor when eval model
   num_workers: 4
@@ -18,7 +18,6 @@ folds:
   - 2
   - 3
   - 4
-# gpu: 1  # set -1 to avoid using gpu
 hyper_param:
   batch_size: 512
   epoch: 500
